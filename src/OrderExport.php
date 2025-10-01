@@ -114,17 +114,17 @@ class OrderExport extends Backend
   <div class="widget w50">
     <h3><label for="format">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_format'][0] . '</label></h3>
     <select name="format" id="format" class="tl_select" onchange="toggleSeparator(this.value)">
+      <option value="csv">CSV</option>
       <option value="xlsx">Office Open XML (.xlsx) Excel 2007 and above</option>
       <option value="ods">Open Document Format/OASIS (.ods)</option>
-      <option value="csv">CSV</option>
     </select>
     <p class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_format'][1] . '</p>
   </div>
-  <div class="widget w50" id="separator-container" style="display:none;">
+  <div class="widget w50" id="separator-container">
     <h3><label for="separator">' . $GLOBALS['TL_LANG']['MSC']['separator'][0] . '</label></h3>
     <select name="separator" id="separator" class="tl_select" data-action="focus->contao--scroll-offset#store">
-      <option value="comma">' . $GLOBALS['TL_LANG']['MSC']['comma'] . '</option>
       <option value="semicolon">' . $GLOBALS['TL_LANG']['MSC']['semicolon'] . '</option>
+      <option value="comma">' . $GLOBALS['TL_LANG']['MSC']['comma'] . '</option>
       <option value="tabulator">' . $GLOBALS['TL_LANG']['MSC']['tabulator'] . '</option>
       <option value="linebreak">' . $GLOBALS['TL_LANG']['MSC']['linebreak'] . '</option>
     </select>' . ($GLOBALS['TL_LANG']['MSC']['separator'][1] ? '
@@ -133,10 +133,10 @@ class OrderExport extends Backend
   <div class="widget w50">
     <h3><label for="variant">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['variant'][0] . '</label></h3>
     <select name="variant" id="variant" class="tl_select">
+      <option value="export_bank">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_bank'][0] . ' (' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_bank'][1] . ')</option>
       <option value="export_orders_full">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders_full'][0] . ' (' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders_full'][1] . ')</option>
       <option value="export_orders">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders'][0] . ' (' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders'][1] . ')</option>
       <option value="export_items">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_items'][0] . ' (' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_items'][1] . ')</option>
-      <option value="export_bank">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_bank'][0] . ' (' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_bank'][1] . ')</option>
     </select>
     <p class="tl_help tl_tip">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['variant'][1] . '</p>
   </div>
@@ -548,7 +548,7 @@ function toggleSeparator(format) {
   {     
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
-    $arrKeys = array('company', 'lastname', 'firstname', 'street', 'postal', 'city', 'country', 'phone', 'email');
+    $arrKeys = array('firstname', 'lastname', 'street', 'postal', 'city', 'country', 'email', 'phone', 'order_id', 'company', 'weight');
 
     $lastColumnLetter = '';
     foreach ($arrKeys as $k => $v) {
@@ -564,12 +564,15 @@ function toggleSeparator(format) {
         $sheet->getColumnDimension($columnID)->setAutoSize(true);
     }
 
-    $objOrders = \Database::getInstance()->prepare("SELECT tl_iso_address.* FROM tl_iso_product_collection, tl_iso_address 
-                                                    WHERE tl_iso_product_collection.billing_address_id = tl_iso_address.id 
+    $objOrders = \Database::getInstance()->prepare("SELECT tl_iso_address.*,tl_iso_product_collection.document_number
+                                                    FROM tl_iso_product_collection, tl_iso_address 
+                                                    WHERE tl_iso_product_collection.shipping_address_id = tl_iso_address.id 
                                                       AND type = 'order'
+                                                      AND tl_iso_product_collection.document_number != '' 
                                                       AND locked >= ? 
                                                       AND locked <= ?
-                                                    GROUP BY member")
+                                                      AND (order_status = '18')
+                                                    ORDER BY document_number ASC")
                                          ->execute(strtotime($dateFrom . " 00:00:00"), strtotime($dateTo . " 23:59:59")); 
 
     if (null === $objOrders) {
@@ -578,15 +581,17 @@ function toggleSeparator(format) {
 
     $row = 2;
     while ($objOrders->next()) {
-      $sheet->setCellValue('A' . $row, $objOrders->company);
+      $sheet->setCellValue('A' . $row, $objOrders->firstname);
       $sheet->setCellValue('B' . $row, $objOrders->lastname);
-      $sheet->setCellValue('C' . $row, $objOrders->firstname);
-      $sheet->setCellValue('D' . $row, $objOrders->street_1);
-      $sheet->setCellValue('E' . $row, $objOrders->postal);
-      $sheet->setCellValue('F' . $row, $objOrders->city);
-      $sheet->setCellValue('G' . $row, $GLOBALS['TL_LANG']['CNT'][$objOrders->country]);
+      $sheet->setCellValue('C' . $row, $objOrders->street_1);
+      $sheet->setCellValue('D' . $row, $objOrders->postal);
+      $sheet->setCellValue('E' . $row, $objOrders->city);
+      $sheet->setCellValue('F' . $row, $objOrders->country);
+      $sheet->setCellValue('G' . $row, $objOrders->email);
       $sheet->setCellValue('H' . $row, $objOrders->phone);
-      $sheet->setCellValue('I' . $row, $objOrders->email);
+      $sheet->setCellValue('I' . $row, $objOrders->document_number);
+      $sheet->setCellValue('J' . $row, $objOrders->company);
+      $sheet->setCellValue('K' . $row, 1);
       $row++;
     }
   
@@ -612,6 +617,7 @@ function toggleSeparator(format) {
         header('Cache-Control: max-age=0');
         $writer = new Csv($spreadsheet);
         $writer->setDelimiter($separator === 'comma' ? ',' : ($separator === 'semicolon' ? ';' : ($separator === 'tabulator' ? "\t" : "\n")));
+        $writer->setLineEnding("\r\n"); // <-- CRLF statt nur LF
         $writer->save('php://output');
         break;
       case 'xlsx':
