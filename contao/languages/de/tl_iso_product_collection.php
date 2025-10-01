@@ -18,7 +18,7 @@ declare(strict_types=1);
 /**
  * CSV - Data
  */
-$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['order_id']            = "Bestell-ID";  
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['order_id']            = "Bestellnummer";  
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['date'  ]              = "Zeitpunkt der Bestellung";  
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['company']             = "Firma";
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['lastname']            = "Name";  
