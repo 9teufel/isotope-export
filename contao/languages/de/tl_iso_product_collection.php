@@ -18,7 +18,7 @@ declare(strict_types=1);
 /**
  * CSV - Data
  */
-$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['order_id']            = "Bestellnummer";  
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['order_id']            = "Bestell-ID";  
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['date'  ]              = "Zeitpunkt der Bestellung";  
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['company']             = "Firma";
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['lastname']            = "Name";  
@@ -51,6 +51,12 @@ $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['item_configuration
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['shipping']            = "Versandart";
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['shipping_costs']      = "Versandkosten";
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['notes']               = "Notizen";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['affiliateIdentifier'] = "Affiliate Identifier";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['affiliateMember']     = "Affiliate Mitglied";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['affiliateComapny']    = "Affiliate Firma";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['affiliateCity']       = "Affiliate Stadt";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['free_product_sku']    = "Gratis-Produkt SKU";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['free_product_name']   = "Gratis-Produkt Name";
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['weight']              = "Gewicht";
 
 /**
