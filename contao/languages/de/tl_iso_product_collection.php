@@ -63,11 +63,9 @@ $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['weight']          
  * Legends
  */
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_information']  = '
-Finanziert durch: <br>
-<strong>roschis Medienproduktion</strong>, <a href="https://roschis.net" target="_blank">roschis.net</a>
-<br><br>
-Entwickelt von: <br>
-<strong>inszenium, Inh. Stefan Lehmann</strong>, <a href="https://inszenium.de" target="_blank">inszenium.de</a>'; 
+Erweiterung finanziert durch: roschis Medienproduktion, <a style="color:lightgrey" href="https://roschis.net" target="_blank">roschis.net</a>
+<br>
+Entwickelt von: inszenium, Inh. Stefan Lehmann, <a style="color:lightgrey" href="https://inszenium.de" target="_blank">inszenium.de</a>'; 
 
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders_full'] = array
 (

@@ -98,7 +98,7 @@ class OrderExport extends Backend
 <input type="hidden" name="FORM_SUBMIT" value="iso_export_orders">
 <input type="hidden" name="REQUEST_TOKEN" value="' . htmlspecialchars(System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue(), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5) . '">
 
-<div id="tl_breadcrumb" style="width: 90%; margin: 20px auto;">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_information'] . '</div>
+<div style="padding:15px; color:lightgrey">' . $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_information'] . '</div>
 
 <fieldset class="tl_tbox nolegend">
   <div class="widget w50">
@@ -612,8 +612,9 @@ function toggleSeparator(format) {
     // Setze die HTTP-Header für den Download
     switch ($format) {
       case 'csv':
+        $datum = date('Y-m-d'); // aktuelles Datum im Format 2025-10-02
         header('Content-Type: text/csv');
-        header('Content-Disposition: attachment;filename="export.csv"');
+        header('Content-Disposition: attachment;filename="export-' . $datum . '.csv"');
         header('Cache-Control: max-age=0');
         $writer = new Csv($spreadsheet);
         $writer->setDelimiter($separator === 'comma' ? ',' : ($separator === 'semicolon' ? ';' : ($separator === 'tabulator' ? "\t" : "\n")));
@@ -621,15 +622,17 @@ function toggleSeparator(format) {
         $writer->save('php://output');
         break;
       case 'xlsx':
+        $datum = date('Y-m-d'); // aktuelles Datum im Format 2025-10-02
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="export.xlsx"');
+        header('Content-Disposition: attachment;filename="export-' . $datum . '.xlsx"');
         header('Cache-Control: max-age=0');
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
         break;
       case 'ods':
+        $datum = date('Y-m-d'); // aktuelles Datum im Format 2025-10-02
         header('Content-Type: application/vnd.oasis.opendocument.spreadsheet');
-        header('Content-Disposition: attachment;filename="export.ods"');
+        header('Content-Disposition: attachment;filename="export-' . $datum . '.ods"');
         header('Cache-Control: max-age=0');
         $writer = new Ods($spreadsheet);
         $writer->save('php://output');
