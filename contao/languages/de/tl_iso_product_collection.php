@@ -18,6 +18,8 @@ declare(strict_types=1);
 /**
  * CSV - Data
  */
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['id']                  = "ID";
+$GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['payment'  ]           = "Zahlungsart";
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['order_id']            = "Bestellnummer";  
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['date'  ]              = "Zeitpunkt der Bestellung";  
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['csv_head']['company']             = "Firma";
@@ -70,7 +72,7 @@ Entwickelt von: inszenium, Inh. Stefan Lehmann, <a style="color:lightgrey" href=
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders_full'] = array
 (
   'Vollständiger Export',
-  'Exportiert alle Bestellungen und ordnet die Produkte den Kunden zu, inklusive Lieferadresse, Versandkosten und Steuern.'
+  'Buchhaltung'
 ); 
 
 $GLOBALS['TL_LANG']['tl_iso_product_collection']['export_orders'] = array

@@ -175,9 +175,7 @@ function toggleSeparator(format) {
   {    
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
-    $arrKeys = array('order_id', 'order_status', 'date', 'billing_address', 'company', 'lastname', 'firstname', 'street', 'street_2', 'postal', 'city', 'country', 'phone', 'email', 
-                                                         'shipping_address', 'company', 'lastname', 'firstname', 'street', 'street_2', 'postal', 'city', 'country', 'phone', 'email', 
-                     'subTotal', 'tax_free_subtotal', 'total', 'tax_free_total', 'tax_label', 'tax_total_price', 'shipping_label', 'shipping_total_price', 'rule_label', 'rule_total_price', 'items', 'notes');
+    $arrKeys = array('id', 'order_id', 'order_status', 'date', 'payment', 'company', 'lastname', 'firstname', 'country', 'total');
 
     if (class_exists('Veello\IsotopeAffiliatesBundle\VeelloIsotopeAffiliatesBundle')) {
       $arrKeys[] = 'affiliateIdentifier';
@@ -253,46 +251,16 @@ function toggleSeparator(format) {
         );
       }
 
-      $sheet->setCellValue('A' . $row, $objOrders->document_number);
-      $sheet->setCellValue('B' . $row, $objOrders->order_status);
-      $sheet->setCellValue('C' . $row, $this->parseDate(Config::get('datimFormat'), $objOrders->locked));
-      $sheet->setCellValue('D' . $row, $objBillingAddress->company . PHP_EOL . $objBillingAddress->firstname . ' ' . $objBillingAddress->lastname . PHP_EOL . $objBillingAddress->street_1 . PHP_EOL . $objBillingAddress->street_2 . PHP_EOL . $objBillingAddress->postal . ' ' . $objBillingAddress->city . PHP_EOL . $GLOBALS['TL_LANG']['CNT'][$objBillingAddress->country] . PHP_EOL . PHP_EOL . $objBillingAddress->phone . PHP_EOL . $objBillingAddress->email);
-      $sheet->getStyle('D' . $row)->getAlignment()->setWrapText(true);
-      $sheet->setCellValue('E' . $row, $objBillingAddress->company);
-      $sheet->setCellValue('F' . $row, $objBillingAddress->lastname);
-      $sheet->setCellValue('G' . $row, $objBillingAddress->firstname);
-      $sheet->setCellValue('H' . $row, $objBillingAddress->street_1);
-      $sheet->setCellValue('I' . $row, $objBillingAddress->street_2);
-      $sheet->setCellValue('J' . $row, $objBillingAddress->postal);
-      $sheet->setCellValue('K' . $row, $objBillingAddress->city);
-      $sheet->setCellValue('L' . $row, $GLOBALS['TL_LANG']['CNT'][$objBillingAddress->country]);
-      $sheet->setCellValue('M' . $row, $objBillingAddress->phone);
-      $sheet->setCellValue('N' . $row, $objBillingAddress->email);
-      $sheet->setCellValue('O' . $row, $objShippingAddress->company . PHP_EOL . $objShippingAddress->firstname . ' ' . $objShippingAddress->lastname . PHP_EOL . $objShippingAddress->street_1 . PHP_EOL . $objShippingAddress->street_2 . PHP_EOL . $objShippingAddress->postal . ' ' . $objShippingAddress->city . PHP_EOL . $GLOBALS['TL_LANG']['CNT'][$objShippingAddress->country] . PHP_EOL . PHP_EOL . $objShippingAddress->phone . PHP_EOL . $objShippingAddress->email);
-      $sheet->getStyle('O' . $row)->getAlignment()->setWrapText(true);
-      $sheet->setCellValue('P' . $row, $objShippingAddress->company);
-      $sheet->setCellValue('Q' . $row, $objShippingAddress->lastname);
-      $sheet->setCellValue('R' . $row, $objShippingAddress->firstname);
-      $sheet->setCellValue('S' . $row, $objShippingAddress->street_1);
-      $sheet->setCellValue('T' . $row, $objShippingAddress->street_2);
-      $sheet->setCellValue('U' . $row, $objShippingAddress->postal);
-      $sheet->setCellValue('V' . $row, $objShippingAddress->city);
-      $sheet->setCellValue('W' . $row, $GLOBALS['TL_LANG']['CNT'][$objShippingAddress->country]);
-      $sheet->setCellValue('X' . $row, $objShippingAddress->phone);
-      $sheet->setCellValue('Y' . $row, $objShippingAddress->email);
-      $sheet->setCellValue('Z' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objOrders->subtotal))));
-      $sheet->setCellValue('AA' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objOrders->tax_free_subtotal))));
-      $sheet->setCellValue('AB' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objOrders->total))));
-      $sheet->setCellValue('AC' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objOrders->tax_free_total))));
-      $sheet->setCellValue('AD' . $row, html_entity_decode($objTax->label));
-      $sheet->setCellValue('AE' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objTax->total_price))));
-      $sheet->setCellValue('AF' . $row, html_entity_decode($objShipping->label));
-      $sheet->setCellValue('AG' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objShipping->total_price))));
-      $sheet->setCellValue('AH' . $row, html_entity_decode($objRule->label));
-      $sheet->setCellValue('AI' . $row, strip_tags(html_entity_decode(Isotope::formatPriceWithCurrency($objRule->total_price))));
-      $sheet->setCellValue('AJ' . $row, $strOrderItems);
-      $sheet->getStyle('AJ' . $row)->getAlignment()->setWrapText(true);
-      $sheet->setCellValue('AK' . $row, $objOrders->notes);
+      $sheet->setCellValue('A' . $row, $objOrders->id);
+      $sheet->setCellValue('B' . $row, $objOrders->document_number);
+      $sheet->setCellValue('C' . $row, $objOrders->order_status);
+      $sheet->setCellValue('D' . $row, $this->parseDate(Config::get('datimFormat'), $objOrders->locked));
+      $sheet->setCellValue('E' . $row, \Database::getInstance()->prepare("SELECT name FROM tl_iso_payment WHERE id=?")->execute($objOrders->payment_id)->name ?? '');
+      $sheet->setCellValue('F' . $row, $objBillingAddress->company);
+      $sheet->setCellValue('G' . $row, $objBillingAddress->lastname);
+      $sheet->setCellValue('H' . $row, $objBillingAddress->firstname);
+      $sheet->setCellValue('I' . $row, $GLOBALS['TL_LANG']['CNT'][$objBillingAddress->country]);
+      $sheet->setCellValue('J' . $row, $objOrders->total);
       
       $colIndex = 38; // Column AL
 
