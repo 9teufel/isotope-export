@@ -563,7 +563,7 @@ function toggleSeparator(format) {
       $sheet->setCellValue('F' . $row, $this->dec($objOrders->country));
       $sheet->setCellValue('G' . $row, $this->dec($objOrders->email));
       $sheet->setCellValue('H' . $row, $this->dec($objOrders->phone));
-      $sheet->setCellValueExplicit('I' . $row, $this->dec($objOrders->document_number), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+      $sheet->setCellValue('I' . $row, $objOrders->document_number);
       $sheet->setCellValue('J' . $row, $this->dec($objOrders->company));
       $sheet->setCellValue('K' . $row, 1);
       $row++;
