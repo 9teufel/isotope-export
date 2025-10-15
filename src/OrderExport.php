@@ -48,6 +48,12 @@ class OrderExport extends Backend
     \System::loadLanguageFile('countries');
   }
   
+ // ✨ Sonderzeichen umwandeln für DPD-Export
+  private function dec($v)
+  {
+    return html_entity_decode((string)$v, ENT_QUOTES | ENT_HTML5, 'UTF-8'); 
+  }
+
   /**
 	 * Return a form to choose a CSV/XLS file and export it
 	 *
@@ -548,17 +554,17 @@ function toggleSeparator(format) {
     }
 
     $row = 2;
-    while ($objOrders->next()) {
-      $sheet->setCellValue('A' . $row, $objOrders->firstname);
-      $sheet->setCellValue('B' . $row, $objOrders->lastname);
-      $sheet->setCellValue('C' . $row, $objOrders->street_1);
+      while ($objOrders->next()) {
+      $sheet->setCellValue('A' . $row, $this->dec($objOrders->firstname));
+      $sheet->setCellValue('B' . $row, $this->dec($objOrders->lastname));
+      $sheet->setCellValue('C' . $row, $this->dec($objOrders->street_1));
       $sheet->setCellValue('D' . $row, $objOrders->postal);
-      $sheet->setCellValue('E' . $row, $objOrders->city);
-      $sheet->setCellValue('F' . $row, $objOrders->country);
-      $sheet->setCellValue('G' . $row, $objOrders->email);
-      $sheet->setCellValue('H' . $row, $objOrders->phone);
-      $sheet->setCellValue('I' . $row, $objOrders->document_number);
-      $sheet->setCellValue('J' . $row, $objOrders->company);
+      $sheet->setCellValue('E' . $row, $this->dec($objOrders->city));
+      $sheet->setCellValue('F' . $row, $this->dec($objOrders->country));
+      $sheet->setCellValue('G' . $row, $this->dec($objOrders->email));
+      $sheet->setCellValue('H' . $row, $this->dec($objOrders->phone));
+      $sheet->setCellValueExplicit('I' . $row, $this->dec($objOrders->document_number), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+      $sheet->setCellValue('J' . $row, $this->dec($objOrders->company));
       $sheet->setCellValue('K' . $row, 1);
       $row++;
     }
@@ -581,12 +587,13 @@ function toggleSeparator(format) {
     switch ($format) {
       case 'csv':
         $datum = date('Y-m-d'); // aktuelles Datum im Format 2025-10-02
-        header('Content-Type: text/csv');
+        header('Content-Type: text/csv; charset=Windows-1252');
         header('Content-Disposition: attachment;filename="export-' . $datum . '.csv"');
         header('Cache-Control: max-age=0');
         $writer = new Csv($spreadsheet);
         $writer->setDelimiter($separator === 'comma' ? ',' : ($separator === 'semicolon' ? ';' : ($separator === 'tabulator' ? "\t" : "\n")));
         $writer->setLineEnding("\r\n"); // <-- CRLF statt nur LF
+        $writer->setUseBOM(true);
         $writer->save('php://output');
         break;
       case 'xlsx':
